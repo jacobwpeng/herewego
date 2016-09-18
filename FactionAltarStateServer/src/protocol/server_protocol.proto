@@ -1,0 +1,28 @@
+package stateserverprotocol;
+
+enum MessageCommand {
+  UpdateStateRequestCmd = 1000;
+  PickRandomFactionRequestCmd = 1100;
+  PickRandomFactionResponseCmd = 1101;
+}
+
+message Message {
+  optional uint32 cmd = 1;
+  optional uint32 ctx = 2;
+  optional bytes payload = 3;
+}
+
+message UpdateStateRequest {
+  optional uint32 group_index = 1;
+  optional uint32 faction_id = 2;
+  optional bool under_protection = 3;
+}
+
+message PickRandomFactionRequest {
+  optional uint32 group_index = 1;
+  optional uint32 self_faction_id = 2;
+}
+
+message PickRandomFactionResponse {
+  optional uint32 faction_id = 1;
+}
