@@ -38,7 +38,7 @@ func (app *ServerApp) HandleUpdateStateRequest(
 	req *serverproto.UpdateStateRequest) {
 	app.serverState.UpdateState(req.GetGroupIndex(), req.GetFactionId(),
 		req.GetUnderProtection())
-	glog.V(1).Infof("UpdateState, group: %d, faction: %d, state: %q",
+	glog.V(1).Infof("UpdateState, group: %d, faction: %d, state: %t",
 		req.GetGroupIndex(), req.GetFactionId(), req.GetUnderProtection())
 }
 
@@ -102,18 +102,15 @@ func (app *ServerApp) Run() {
 	const kBufSize int = 1024
 	buf := make([]byte, kBufSize)
 
-	waitDuration, _ := time.ParseDuration("100us")
-
 Exit:
 	for !quit {
 		select {
 		case s := <-c:
 			glog.Infof("Receive signal %v, exit...", s)
-			glog.Flush()
 			quit = true
 			break Exit
 		default:
-			deadline := time.Now().Add(waitDuration)
+			deadline := time.Now().Add(time.Millisecond * 10)
 			app.ServerConn.SetReadDeadline(deadline)
 			n, addr, err := app.ServerConn.ReadFromUDP(buf)
 			if err != nil {
@@ -123,7 +120,7 @@ Exit:
 				}
 				continue
 			}
-			glog.Infof("Receive %d bytes from %v", n, addr)
+			glog.V(2).Infof("Receive %d bytes from %v", n, addr)
 
 			var message serverproto.Message
 			err = protobuf.Unmarshal(buf[:n], &message)
@@ -140,10 +137,10 @@ Exit:
 			if bytes != nil {
 				n, err := app.ServerConn.WriteToUDP(bytes, addr)
 				if err != nil {
-					glog.Errorf("WriteToUDP (addr %v) failed: %v", err)
+					glog.Errorf("WriteToUDP (addr %v) failed: %v", addr, err)
 					continue
 				}
-				glog.Infof("Write %d bytes to %v", n, addr)
+				glog.V(2).Infof("Write %d bytes to %v", n, addr)
 			}
 		}
 	}
