@@ -1,0 +1,43 @@
+package regionserverprotocol;
+
+enum MessageCommand {
+  UpdateRegionRequestCmd = 1000;
+  PickFromRegionRequestCmd = 1010;
+  PickFromRegionResponseCmd = 1011;
+  RegionStatusRequestCmd = 1020;
+  RegionStatusReponseCmd = 1021;
+}
+
+message Message {
+  optional uint32 cmd = 1;
+  optional uint32 ctx = 2;
+  optional bytes payload = 3;
+}
+
+message UpdateRegionRequest {
+  optional uint32 uin = 1;
+  optional uint32 level = 2;
+  optional uint32 region = 3;
+}
+
+message PickFromRegionRequest {
+  optional uint32 self_uin = 1;
+  optional uint32 self_level = 2;
+  optional uint32 expect_region = 3;
+}
+
+message PickFromRegionResponse {
+  repeated uint32 uin = 1;
+}
+
+message RegionStatus {
+  optional uint32 region = 1;
+  optional uint32 num = 2;
+}
+
+message RegionStatusRequest {
+}
+
+message RegionStatusReponse {
+  repeated RegionStatus status = 1;
+}
