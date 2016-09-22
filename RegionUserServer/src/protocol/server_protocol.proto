@@ -5,7 +5,7 @@ enum MessageCommand {
   PickFromRegionRequestCmd = 1010;
   PickFromRegionResponseCmd = 1011;
   RegionStatusRequestCmd = 1020;
-  RegionStatusReponseCmd = 1021;
+  RegionStatusResponseCmd = 1021;
 }
 
 message Message {
@@ -38,6 +38,6 @@ message RegionStatus {
 message RegionStatusRequest {
 }
 
-message RegionStatusReponse {
+message RegionStatusResponse {
   repeated RegionStatus status = 1;
 }

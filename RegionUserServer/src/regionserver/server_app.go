@@ -42,7 +42,7 @@ func (app *ServerApp) HandleUpdateRegion(req *serverproto.UpdateRegionRequest) {
 }
 
 func (app *ServerApp) HandleRegionStatus(req *serverproto.RegionStatusRequest,
-	resp *serverproto.RegionStatusReponse) {
+	resp *serverproto.RegionStatusResponse) {
 	glog.V(1).Info(req)
 	status := app.serverState.GetRegionStatus()
 	resp.Status = make([]*serverproto.RegionStatus, 0, len(status))
@@ -82,15 +82,15 @@ func (app *ServerApp) HandleMessage(
 		if err != nil {
 			return nil, fmt.Errorf("Unmarshal RegionStatusRequest failed: %v", err)
 		}
-		var resp serverproto.RegionStatusReponse
+		var resp serverproto.RegionStatusResponse
 		app.HandleRegionStatus(&req, &resp)
 
 		encoded, err := protobuf.Marshal(&resp)
 		if err != nil {
-			return nil, fmt.Errorf("Marshal RegionStatusReponse failed: %v", err)
+			return nil, fmt.Errorf("Marshal RegionStatusResponse failed: %v", err)
 		}
 
-		respCmd := uint32(serverproto.MessageCommand_RegionStatusReponseCmd)
+		respCmd := uint32(serverproto.MessageCommand_RegionStatusResponseCmd)
 		reply := serverproto.Message{
 			Cmd:     protobuf.Uint32(respCmd),
 			Ctx:     message.Ctx,
