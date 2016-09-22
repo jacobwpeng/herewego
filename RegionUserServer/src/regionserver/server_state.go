@@ -81,12 +81,13 @@ func (levelMap LevelMap) RandomPickFromLevel(level uint32,
 		panic("Invalid expectNum")
 	}
 	uins, exists := levelMap[level]
-	if !exists {
+	if !exists || len(uins) == 0 {
 		return result
 	}
 
 	if len(uins) <= expectNum {
-		return uins
+		result = append(result, uins...)
+		return result
 	}
 
 	var choose map[uint32]bool
@@ -143,10 +144,11 @@ func (serverState *ServerState) PickUser(selfUin uint32, selfLevel uint32,
 	const kMaxUinNum int = 10
 
 	uins = levelMap.RandomPickFromLevel(selfLevel, kMaxUinNum)
+	uins = RemoveElementByValue(uins, selfUin)
 	for len(uins) < kMaxUinNum && !(prev <= 0 && next > kMaxSearchLevel) {
 		if prev > 0 {
 			result := levelMap.RandomPickFromLevel(prev, kMaxUinNum-len(uins))
-			RemoveElementByValue(result, selfUin)
+			result = RemoveElementByValue(result, selfUin)
 			uins = append(uins, result...)
 			prev -= 1
 		}
@@ -157,7 +159,7 @@ func (serverState *ServerState) PickUser(selfUin uint32, selfLevel uint32,
 
 		if next <= kMaxSearchLevel {
 			result := levelMap.RandomPickFromLevel(next, kMaxUinNum-len(uins))
-			RemoveElementByValue(result, selfUin)
+			result = RemoveElementByValue(result, selfUin)
 			uins = append(uins, result...)
 			next += 1
 		}
