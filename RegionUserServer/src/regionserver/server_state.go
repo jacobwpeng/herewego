@@ -90,7 +90,7 @@ func (levelMap LevelMap) RandomPickFromLevel(level uint32,
 		return result
 	}
 
-	var choose map[uint32]bool
+	choose := make(map[uint32]bool)
 	for len(choose) != expectNum {
 		choose[uint32(rand.Intn(len(uins)))] = true
 	}
