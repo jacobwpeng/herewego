@@ -251,15 +251,11 @@ func (app *ServerApp) handleQueryAll(w http.ResponseWriter, r *http.Request) {
 	defer app.m.RUnlock()
 
 	var buffer bytes.Buffer
-	fmt.fprint
-	buffer.WriteString(fmt.Sprintf("<h1>Begin: %v</h1>",
-		app.serverState.salesBegin))
-	buffer.WriteString(fmt.Sprintf("<h1>End: %v</h1>",
-		app.serverState.salesEnd))
-	buffer.WriteString(fmt.Sprintf("<h1>User size: %d</h1>",
-		len(app.serverState.userGroups)))
+	fmt.Fprintf(&buffer, "<h1>Begin: %v</h1>", app.serverState.salesBegin)
+	fmt.Fprintf(&buffer, "<h1>End: %v</h1>", app.serverState.salesEnd)
+	fmt.Fprintf(&buffer, "<h1>User Num: %d</h1>", len(app.serverState.userGroups))
 	for k, v := range app.serverState.userGroups {
-		buffer.WriteString(fmt.Sprintf("%d: %d<br />", k, v))
+		fmt.Fprintf(&buffer, "%d: %d<br />", k, v)
 	}
 	w.Write(buffer.Bytes())
 }
