@@ -26,20 +26,21 @@ import (
 )
 
 type ServerApp struct {
-	m           sync.RWMutex
-	wg          sync.WaitGroup
-	serverState *ServerState
-	httpServer  *http.Server
-	udpConn     *net.UDPConn
-	exitChan    chan struct{}
+	m              sync.RWMutex
+	wg             sync.WaitGroup
+	serverState    *ServerState
+	httpServer     *http.Server
+	udpConn        *net.UDPConn
+	exitChan       chan struct{}
+	managerAddress string
 }
 
-func NewServerApp(listeningAddress string) (*ServerApp, error) {
+func NewServerApp(udpAddr string, mgrAddr string) (*ServerApp, error) {
 	httpServer := &http.Server{
-		Addr: listeningAddress,
+		Addr: udpAddr,
 	}
 
-	udpServerAddr, err := net.ResolveUDPAddr("udp", listeningAddress)
+	udpServerAddr, err := net.ResolveUDPAddr("udp", udpAddr)
 	if err != nil {
 		return nil, fmt.Errorf("ResolveUDPAddr failed: %v", err)
 	}
@@ -50,10 +51,11 @@ func NewServerApp(listeningAddress string) (*ServerApp, error) {
 	}
 
 	return &ServerApp{
-		serverState: newServerState(),
-		httpServer:  httpServer,
-		exitChan:    make(chan struct{}),
-		udpConn:     udpServerConn,
+		serverState:    newServerState(),
+		httpServer:     httpServer,
+		udpConn:        udpServerConn,
+		exitChan:       make(chan struct{}),
+		managerAddress: mgrAddr,
 	}, nil
 }
 
@@ -62,7 +64,7 @@ func (app *ServerApp) Run() {
 	defer app.udpConn.Close()
 	http.HandleFunc("/", app.handleQueryAll)
 	http.HandleFunc("/update", app.handleUpdateServerState)
-	go http.ListenAndServe(":8080", nil)
+	go http.ListenAndServe(app.managerAddress, nil)
 
 	app.wg.Add(1)
 	go app.listenAndServeUDP()

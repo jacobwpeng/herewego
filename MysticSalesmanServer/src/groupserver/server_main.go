@@ -3,9 +3,10 @@ package main
 import "flag"
 
 func main() {
-	flag.Parse()
 	listeningAddress := flag.String("H", ":6666", "Listening Address")
-	app, err := NewServerApp(*listeningAddress)
+	managerAddress := flag.String("M", ":8080", "Manager HTTP Listening Address")
+	flag.Parse()
+	app, err := NewServerApp(*listeningAddress, *managerAddress)
 	if err != nil {
 		panic(err)
 	}
