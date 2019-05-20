@@ -2,6 +2,8 @@ var WALL_PROXY = '{{.WallProxy}}';
 
 var NO_WALL_PROXY = '{{.NoWallProxy}}';
 
+var DIRECT = '{{.Direct}}';
+
 var NO_WALL_PROXY_SITES = [
 {{ range $key, $value := .NoWallSites -}}
   "{{$key}}",
@@ -52,7 +54,7 @@ function FindProxyForURL(url, host) {
     }
 
     if (direct_site(isDomain) || check_private_ipaddr()) {
-      return "DIRECT";
+      return DIRECT;
     } else if (isPlainHostName(host) === true 
             || check_ipv4() === true 
             || no_wall_proxy_site(isDomain) === true) {

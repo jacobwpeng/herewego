@@ -170,6 +170,7 @@ func (app *App) HandleGenerate(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	nowallProxy := unescapeProxy(r.Form.Get("nowallproxy"))
 	wallProxy := unescapeProxy(r.Form.Get("wallproxy"))
+	direct := unescapeProxy(r.Form.Get("direct"))
 
 	tmpl := template.Must(template.ParseFiles(app.state.templateFile))
 
@@ -179,6 +180,7 @@ func (app *App) HandleGenerate(w http.ResponseWriter, r *http.Request) {
 	type GenerateData struct {
 		WallProxy   string
 		NoWallProxy string
+		Direct      string
 		NoWallSites SiteSet
 		DirectSites SiteSet
 	}
@@ -186,6 +188,7 @@ func (app *App) HandleGenerate(w http.ResponseWriter, r *http.Request) {
 	data := GenerateData{
 		WallProxy:   wallProxy,
 		NoWallProxy: nowallProxy,
+		Direct:      direct,
 		NoWallSites: app.state.noWallProxySites,
 		DirectSites: app.state.directSites,
 	}
